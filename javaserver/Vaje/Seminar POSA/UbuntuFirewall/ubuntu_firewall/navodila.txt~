@@ -1,0 +1,48 @@
+The basic syntax is
+iptables -option [Chain] [Rule] -j [Target]
+iptables -A INPUT -j FIREWALL
+
+You can use iptables to slow down connections:
+iptables -I INPUT -p TCP -m state --state NEW -m limit --limit 30/minute --limit -burst 5 -j ACCEPT
+iptables -I INPUT -p TCP -m state --state NEW -m limit \ --limit 30/minute --limit -burst 5 -j ACCEPT
+
+iptables -I INPUT -p tcp --dport 25 -i eth0 -m state --state NEW -m recent --set
+
+iptables -I INPUT -p tcp --dport 25 -i eth0 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP
+
+
+And, install Denyhosts.
+fail2ban
+RSA Authentication
+
+iptables -N blacklist #-N creates a New, user defined chain (blacklist for example).
+iptables -A INPUT -t icmp -j DROP # Blocks ping.
+iptables INPUT -j blacklist # Will process packets according to the blacklist (user defined) chain.
+iptables -A blacklist -s 111.222.33.444 -j DROP # blocks packets from 111.222.33.444 using a user defined chain, "blacklist
+Ex: -d 192.168.0.0/24
+iptables -A INPUT ! -s 192.168.0.0/24 -p tcp --dport 22 -j DROP # Drops ssh from outside your LAN
+iptables -A OUTPUT -d 111.222.33.444 -j DROP # Blocks all packets going to 111.222.33.444
+iptables -A blacklist -s 111.222.33.444 -j DROP # blocks packets from 111.222.33.444 using a user defined chain, "blacklist"
+
+
+iptables -A INPUT -m state --state NEW,INVALID -j DROP
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+iptables -A INPUT --mac-source 42:42:AA:42:42:AA -j ACCEPT
+
+CUSTOM RULE PORT 22 and IP
+iptables -A TRUSTED -i eth0 -p tcp -m tcp -sport 22 -m tcp -s 10.11.1.87 -j ACCEPT
+
+
+PORT      STATE SERVICE
+22/tcp    open  ssh
+111/tcp   open  rpcbind
+139/tcp   open  netbios-ssn
+445/tcp   open  microsoft-ds
+631/tcp   open  ipp
+725/tcp   open  unknown
+902/tcp   open  iss-realsecure-sensor
+2049/tcp  open  nfs
+iptables -A TRUSTED -i eth0 -o eth1 -p udp -m udp -sport <port#> -j ACCEPT
+iptables -A TRUSTED -i eth0 -o eth1 -p tcp -m tcp -sport <port#> -j ACCEPT
+

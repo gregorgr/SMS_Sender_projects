@@ -1,0 +1,33 @@
+Rešite nalogi 4 in 5 z VS izpita 4. septembra 2013
+(Izpit-2013-03-vs)
+
+
+
+4. naloga (25%): V jeziku Java napišite dva razreda:
+
+- razred, ki bo predstavljal mesečno evidenco meteoroloških meritev,
+- razred, ki bo predstavljal meteorološke meritve enega dneva. Razred
+Dan naj vsebuje:
+• polji (ali polja) za shranjevanje temperature in
+zračnega tlaka zjutraj, sredi dneva in zvečer,
+• konstruktor, ki bo omogočal poljubno določitev začetne vrednosti vseh polj,
+• metode za dostop do vseh polj (t.i. get in set metode).
+Razred Mesec naj vsebuje:
+• polje (tabelo) za shranjevanje vseh dni v mesecu,
+• metodo, ki bo vrnila število dni v mesecu, ko je temperatura dosegla 30 ◦ C ali več.
+
+
+
+5. naloga (25%): Napišite metodo v Javi, ki bo izpisala tabelo poštevanke za množenje
+pozitivnih celih števil manjših ali enakih podanemu številu int n. Klic metode postevanka(4)
+bi tako na zaslonu izpisal:
+|| 1 | 2 | 3 | 4 |
+========================
+1 || 1 | 2 | 3 | 4 |
+________________________
+2 || 2 | 4 | 6 | 8 |
+________________________
+3 || 3 | 6 | 9 | 12 |
+________________________
+4 || 4 | 8 | 12 | 16 |
+________________________ .

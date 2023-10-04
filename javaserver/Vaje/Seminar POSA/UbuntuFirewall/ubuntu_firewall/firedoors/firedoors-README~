@@ -1,0 +1,165 @@
+***************************************************************************
+*   Ubuntu-firewall README File                                           *
+*   Version: 0.9  14 August 2007                                          *
+*                                                                         *
+*   This script is free software; you can redistribute it and/or modify   *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+***************************************************************************
+
+Ubuntu-firewall was first introduced in August 2005.  Since then, with
+valuable feedback from the Ubuntu Community, it has evolved into a very
+useful firewall and NAT-routing utility for Ubuntu Linux Boxes. It is now
+being employed by hundreds of users from single PCs and small business
+networks, to educational institutions.
+
+---
+
+14 August 2007 - version 0.9 contains a couple of minor bugfixes relating
+to Ubuntu-firewall properly detecting if it is being executed with correct
+privileges.  Also renamed the firedoors.sh init script to just,
+"firedoors."  This seems to work better with the new upstart init
+system that Ubuntu has gone to.  Added better user feedback when the
+verbose option is used.
+
+01 August 2007 - version 0.8 fixes a couple of very minor bugs which didn't
+affect any of functionality.  It addressed a user feedback issue.
+
+03 June 2007 - Version 0.7 has a more, 'intelligent' method of detecting
+network interfaces and IP address settings.
+
+08 February 2007 - Version 0.6 now supports port forwarding to more than one
+internal host.  See Ubuntu-firewall's configuration file for details.  It
+also supports a, "NAT only" configuration which allows you to configure
+Ubuntu-firewall to work as a NAT routing gateway only.  In this mode, it
+does no port filtering or blocking.
+
+Beginning with version 0.5, Ubuntu-firewall will act more like other
+system startup scripts.  Linux Standard Base init functions are now being
+utilized by Ubuntu-firewall making it capable of showing up during the
+boot-up process!  Along with some code clean-up, version 0.5 also makes an
+attempt to support other Linux distributions instead of just exiting when
+non Ubuntu systems are detected.
+
+---
+
+There are two ways to install Ubuntu-firewall.  Manually or with the in-
+cluded installer script.  The installer script also has the ability to
+remove Ubuntu-firewall from your system.  To install manually, proceed to
+the paragraph entitled, "Manual Installation."  The procedure for
+installation using the included installer script follows.
+
+
+Installation Using the Installer Script:
+Enter the directory in which the unpacked files for firedoors are
+located.  You're probably already there if you're reading this!  Make sure
+the installer script is executable and that you run it with root privileges.
+Ex: 
+"sudo chmod 755 firedoors-installer".  
+To run it, simply type,
+"sudo bash ./firedoors-installer".  
+
+When the installer script finishes,
+Ubuntu-firewall will be installed!  You'll have the opportunity to edit the
+config file during the install.  If you decline to configure the config file
+during the install, then you can do that afterwards.  Simply open up the
+config file (/etc/default/firedoors-cfg) in your favorite text editor,
+modify it to suit your system, and then save it.  Make sure to enable it as
+Ubuntu-firewall is disabled in the config file by default.  Once this is
+done, you can start Ubuntu-firewall by issuing the following at the command
+prompt:  
+"sudo firedoors start"  
+See Ubuntu-firewall's man page for
+more info (man firedoors). Ubuntu-firewall will start automatically on
+subsequent boot ups.  You may remove this directory and all files contained
+within, once the installer script finishes. The man page for Ubuntu-firewall
+is accessible by typing, "man ubuntu-firewall" at the command prompt.
+
+
+Extra Information Regarding The Installer Script (for those curious folks!):
+When the installer script is run, it sets the appropriate attributes on the
+firewall script and the config file,  copies them to their correct locations,
+and adds Ubuntu-firewall as  a startup service  to run levels 2, 3, 4, and
+5 with a start priority of 85.  It also makes an entry in a user-configurable
+file for the DHCP client process, located in 
+/etc/dhcp3/dhclient-exit-hooks
+that accomodates dynamic IP configurations by having Ubuntu-firewall reload
+itself when the DHCP client process acquires a new IP address lease.  If you
+are upgrading from a previous version of Ubuntu-firewall, the script will
+detect this and upgrade your version after making a backup of your old
+configuration file. Starting with version 0.5, Ubuntu-firewall adds a man
+page which can be accessed by typing, "man firedoors" at the command
+prompt.  It also creates a symlink in /usr/bin called firedoors, which
+points to the actual script (/etc/init.d/firedoors).   This makes it
+easier and more convenient to manipulate firedoors from the command
+line.  If/when firedoors is ever removed using the installer script,
+all traces of firedoors will be removed including any symlinks and man
+pages - it's tidy and cleans up after itself! :-)
+
+
+
+Manual Installation: The installer script method is highly recommended but
+if  you prefer  to do it manually, the following  steps will accomplish it.
+The  firewall script  itself (firedoors) should  be placed within your
+/etc/init.d directory.  It needs NO editing as all user-defined options are
+located within the accompanying configuration file. Ubuntu-firewall should be
+owned by root and in group root. It also needs to be executable.
+
+Ex: "sudo chmod 755 firedoors"
+
+The config file (firedoors-cfg) needs to be placed in your /etc/firedoors/
+directory.  It's commented very well and is easy to configure.  Simply open it
+up in your favorite text editor, modify it to suit your system, and then save
+it.  To have firedoors start as a service at boot time, use the
+update-rc.d tool to add it to the desired run level(s).  For example, to have
+it startup in run levels 2, 3, 4, and 5, just issue the following command at
+the command prompt:
+"sudo update-rc.d firedoors start 85 2 3 4 5 . stop 20 0 1 6 ."
+
+If you are configured to use DHCP to acquire your IP address settings, then you
+need to add a line to your /etc/dhcp3/dhclient-exit-hooks file which will cause
+the DHCP process to reload Ubuntu-firewall upon acquiring a new IP address lease.
+To take care of this, simply run the following command at the prompt:
+
+"sudo echo '/etc/init.d/firedoors reload' >> /etc/dhcp3/dhclient-exit-hooks"
+
+Make sure that file is executable by running the following command at the prompt:
+
+"sudo chmod 755 /etc/dhcp3/dhclient-exit-hooks" 
+ If you want the man page for
+Ubuntu-firewall, you can install it to your /usr/share/man/man1 directory.  The
+man page is included and is called, 'firedoors.1.gz'  It is viewable by
+typing, "man firedoors" at the command prompt.  For added convenience and
+continuity with the man page, you should also create a sym link in your /usr/bin
+directory called, "firedoors", which points to the actual script
+(located at /etc/init.d/ubuntu-firewall).  This can be accomplished by issuing
+the following command at the command prompt:
+"sudo ln -s /etc/init.d/firedoors /usr/bin/firedoors"  
+This also
+makes it much easier to manipulate Ubuntu-firewall from the command line!  After
+you have edited Ubuntu-firewall's config file for your system, you can manually
+start it by doing the following at the command prompt: 
+"sudo firedoors start"
+That's it!  Your system is now being protected by Firedoors!  Once you've
+copied or moved the files to their appropriate locations, you may remove this
+directory and any remaining files contained within.
+
+
+Extra Misc. Info:
+Ubuntu-firewall is designed to be called directly by the init processes.  It
+takes standard arguments (start, stop, reload, status, lockdown, and ver) and
+may be manually invoked or shutdown on-the-fly.  It has support for Micro$oft
+Networking, FTP, and whatever other TCP/UDP ports you wish to leave accessible.
+It also supports Network Address Translation with routing so that it can act
+as a router for a local area network or other PC.  Ubuntu-firewall can be
+configured to do port forwarding to one or more internal host(s).  Also, it
+can accomodate custom rules with the, "CUSTOM_RULES" directive in the
+configuration file.  Use with care! :-)
+
+Enjoy!

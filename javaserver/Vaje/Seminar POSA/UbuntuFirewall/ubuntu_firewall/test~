@@ -1,0 +1,27 @@
+#!/bin/bash
+#!/bin/bash
+echo "tester"
+OPEN_TCP_PORTS="12 22 33"
+DOS_BLOCK="yes"
+
+
+if [ "$OPEN_TCP_PORTS" != "" ]; then
+	for i in $OPEN_TCP_PORTS; do
+		# DOS prevention
+		if [ "$DOS_BLOCK" == "yes" ]; then
+			if [ "$i" == "80" | "$i" == "443" ]; then
+				echo "policy for apache ports"
+
+			fi
+			if [ "$i" != "80" | "$i" != "443" ]; then
+				echo " policy for non apache ports"
+
+			fi
+		else
+			echo " else"
+		fi
+	done
+
+
+fi
+exit 0

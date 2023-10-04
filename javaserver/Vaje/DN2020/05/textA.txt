@@ -1,0 +1,6 @@
+textB.txt
+- metodo obrniNiz, ki kot parameter prejme niz, OK
+- vrne pa njegovo obrnjeno vrednost. Primer obrniNiz("žirafa") OK
+-Nato iz tipkovnice preberite ime datoteke A, v
+kateri imate besedilo ter ime datoteke B, v katero boste
+zapisovali nove podatke.

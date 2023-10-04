@@ -1,0 +1,7 @@
+ 
+# /etc/cron.d/a2monitor: crontab fragment for apache2
+# Looks if apache2 process is working and starts it, if not
+# minute (0-59), hour (0-23, 0 = midnight), day (1-31), month (1-12), weekday (0-6, 0 = Sunday), command:
+
+# every 10 minutes
+0,10,20,30,40,50 *       * * *  sudo apache2mon

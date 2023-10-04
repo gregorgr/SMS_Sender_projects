@@ -1,0 +1,184 @@
+############################################################################
+#  ubuntu-firewall-cfg    Configuration settings for the Ubuntu-firewall.  #
+#  This config file should be placed within your /etc/default directory.   #
+#  Version: 0.9								   #
+############################################################################
+
+###
+#  Network Interfaces
+###
+
+#  Sets the external interface.  This is the interface that will
+#  face the Internet.  It's the one you want Ubuntu-firewall to
+#  protect.  Typically it will be eth0 or eth1.  However, you
+#  may choose to have Ubuntu-firewall automatically select the
+#  * first * active interface it finds.  In this case, you would
+#  use the key word, "auto" as in, EXTIF="auto".  This is usually
+#  a good choice for users who have only one active network
+#  interface on their machine.  Generally speaking, if you enable
+#  the NAT routing features of Ubuntu-firewall, you really should
+#  specify the external interface and not rely on auto-detection.
+EXTIF="auto"
+
+#  List the interface(s) that you would like to exclude from the
+#  external interface auto-detection routine.  This is handy in
+#  some instances where you may have multiple active network
+#  interfaces that cannot be easily de-activated and may interfere
+#  with external interface auto-detection (such as the virtual
+#  network interfaces in vmware, etc.).  This option is only used
+#  when the EXTIF setting above is set to, "auto."  For example,
+#  if you wanted to blacklist interfaces eth3, vmnet1, and  vmnet2,
+#  you would put, IF_BLACKLIST="eth3 vmnet1 vmnet2".  Most users
+#  will leave this option blank.
+IF_BLACKLIST=""
+
+#  This option causes Ubuntu-firewall to act as a NAT router only.
+#  It is meant to replace Ubuntu-ICS as a NAT routing solution.
+#  With the, "NAT_ONLY" option set to, "yes", all packet filtering
+#  policies and rules established, will deal specifically with
+#  securely accomplishing NAT routing and that is all.  It will
+#  not block or filter access to any ports.  If you want BOTH a
+#  firewall and NAT configuration, then leave this option set to,
+#  "no" and it will allow you to configure NAT along with a
+#  stateful firewall.  In this case, you will need to also specify
+#  an interface for the, "NAT_IF" directive below.  If you want
+#  just a stateful firewall configuration, again, simply leave this
+#  set to, "no" and then leave the, "NAT_IF" directive below, blank.
+NAT_ONLY="no"
+
+#  Set the internal interface if you have one and want to be
+#  able to pass all local traffic over it.  If not, then don't
+#  specify an interface inside the quotes.  Just leave it blank
+#  as in INTIF="".  This can NOT be set to, "auto!"
+INTIF=""
+
+
+
+##
+#  Miscellaneous options set with, "yes" or, "no"
+##
+
+#  Disable the firewall (useful for temporarily disallowing
+#  Ubuntu-firewall to start, without having to remove it from your
+#  startup configuration).  This setting affects Ubuntu-firewall's
+#  ability to start on boot-up but has no affect on the current
+#  firewall state.  In other words, if Ubuntu-firewall has run
+#  before setting this to disabled, the firewall rules and policies
+#  will still be active until you either reboot, or issue the
+#  following at the command line: 'sudo ubunti-firewall stop'
+DISABLED="yes"
+
+#  Firewall logging (useful for debug, curiousity, etc.)
+#  This logs to syslog.
+LOG_PACKETS="no"
+
+#  Verbose mode (feedback during script execution)
+#  This is useful for debug, extra feedback, etc.
+VERBOSE="yes"
+
+#  Respond to ICMP (echo-request) pings
+ALLOW_PINGS="yes"
+
+
+
+###
+#  Complex Server options set with, "yes" or, "no"
+###
+
+#  FTP server - Firewall requirements for an FTP Server are a
+#  little more involved.  Thus, I've coded support for it directly
+#  into Ubuntu-firewall.  It can be enabled/disabled here.
+ALLOW_FTP="no"
+
+#  Micro$oft Networking - Firewall requirements for Micro$oft
+#  Networking are a little more involved.  Thus, I've coded
+#  support for it directly into Ubuntu-firewall.  It can be
+#  enabled/disabled here.
+ALLOW_MSNETWORKING="no"
+
+
+
+###
+#  Other services
+###
+
+#  List the TCP ports you want un-blocked by the firewall.  This applies to
+#  THIS host only!  The ports need to be inside the quotes with a space
+#  between each one. (ex: OPEN_TCP_PORTS="22 80 110")
+#  This would un-block TCP ports 22 (ssh), 80 (http), and 110 (POP-3).
+OPEN_TCP_PORTS=""
+
+#  List the UDP ports you want un-blocked by the firewall.  This applies to
+#  THIS host only!  The ports need to be inside the quotes with a space
+#  between each one. (ex: OPEN_UDP_PORTS="53")
+#  This would un-block UDP port 53 (DNS Server services).
+OPEN_UDP_PORTS=""
+
+
+
+###
+#  Advanced Options
+###
+
+#  Network Address Translation/Routing
+#
+#  This enables NAT Routing capabilities.  To use this feature, you must
+#  specify the interface for NAT_IF, for which you want NAT services applied.
+#  This MAY be the same as your internal interface (INTIF) as specified above.
+#  ex:  NAT_IF="eth1"  (this will allow you to connect another PC to this PC's
+#  eth1 interface for Internet Access on that PC)  To disable NAT, don't
+#  specify an interface inside the quotes.  Just leave it blank as in NAT_IF="".
+#
+#  Bear in mind that the PC connected to this one will need to be set up on
+#  the same network segment that this one's NAT_IF is on.  You will also need
+#  to use the IP address assigned to the NAT_IF device, as that PC's default
+#  gateway to the Internet.
+NAT_IF=""
+
+#  Forwarding of Ports
+#
+#  This allows you to forward ports to internal hosts.  To use this feature,
+#  simply specify the internal host(s) to which you want to forward incoming
+#  connections using the FORWARD_HOST(x) directive.  Once you've specified
+#  the host(s) to which you want ports forwarded, you need to specify the
+#  ports for each one.  This is done using the following two directives:
+#  FORWARD_HOST(x)_TCP, FORWARD_HOST(x)_UDP.  You may list multiple ports
+#  by separating them with spaces.  For instance, if you wanted to forward
+#  incoming to TCP ports 22, 80, and 110, and UDP port 123 to an internal
+#  host with an IP address of 192.168.1.10, you would use the following
+#  configuration:
+#  FORWARD_HOST1="192.168.1.10"
+#  FORWARD_TCP_HOST1="22 80 110"
+#  FORWARD_UDP_HOST1="123"
+#
+#  You may establish forwarding to as many internal hosts as you like by
+#  by following the established convention however, be sure not to forward
+#  the same port to more than one internal host.
+FORWARD_HOST1=""
+FORWARD_HOST1_TCP=""
+FORWARD_HOST1_UDP=""
+
+FORWARD_HOST2=""
+FORWARD_HOST2_TCP=""
+FORWARD_HOST2_UDP=""
+
+#  Custom Rules
+#
+#  This allows the user to define non-standard or custom rules to be added
+#  to the firewall policy.  It is STRONGLY RECOMMENDED that you only make
+#  use of this if you understand iptables hirarchy and firewall design in
+#  general!  Carelessly inserting rules into Ubuntu-firewall can easily
+#  render it ineffective.  You have been warned!  Now, with all that out
+#  of the way, here's how to do it.  First, you need to create a file that
+#  contains the appropriate iptables commands, making certain that you have
+#  the syntax correct.  When making your custom rules, you should probably
+#  test each of them, one-at-a-time at the command prompt to verify that they
+#  work as expected.  You may define as many custom rules as you like but
+#  remember, usually the simpler the firewall ruleset, the more robust it
+#  tends to be.  Take special care to make sure that any rules you define,
+#  don't sabotage other rules listed below it.  Once you have your file
+#  populated with your custom rules, save it and set the CUSTOM_RULES directive
+#  to point to your file. Ex: CUSTOM_RULES="/etc/default/custom_firewall_rules"
+#  If you don't have any reason to use custom rules, then simply leave
+#  CUSTOM_RULES blank as in, CUSTOM_RULES="".
+CUSTOM_RULES=""

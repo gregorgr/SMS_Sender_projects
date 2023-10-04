@@ -1,0 +1,208 @@
+#!/bin/bash
+#
+# Version: 0.9
+#
+#     This installer script installs/removes Ubuntu-firewall
+
+#  Check to see that we are ROOT!
+exec_user=`/usr/bin/whoami`
+if [ "$exec_user" != "root" ] ; then
+	echo -e "\E[31;40mThis installer script must be executed with root privileges!  Try prepending, 'sudo' to the beginning!\E[32;0m"
+	exit 1
+fi
+clear
+#  Is this an Ubuntu System?
+echo "Checking for Ubuntu system..."
+sleep 1
+OS_FILE_LOC="`ls /etc | grep release`"
+OS_INFO="`cat /etc/$OS_FILE_LOC`"
+IS_UBUNTU="`echo $OS_INFO | egrep -io 'Debian|Ubuntu' | uniq`"
+if [ "$IS_UBUNTU" == "" ]; then
+	echo -e '\E[31;40m'
+	echo "This installer script did NOT detect an Ubuntu System!  Although specifically"
+	echo "written for Ubuntu Linux, Ubuntu-firewall *MAY* work on your Linux system too!"
+	echo "Just be aware that some file paths vary from distribution to distribution and it"
+	echo "could be a potential cause for problems!  If you install Ubuntu-firewall on a"
+	echo "non-Ubuntu system, it's recommended that you enable the verbosity option in the"
+	echo "config file so that you can see any warnings generated during the execution of"
+	echo "Ubuntu-firewall.  Once you're satisfied that Ubuntu-firewall is functioning as"
+	echo "expected, then you may choose to disable the verbosity option.  Good luck!"
+	echo -e '\E[32;0m'
+	echo "Continue? (y=yes, n=no)"
+	read yesorno
+	while [[ "$yesorno" != "y" && "$yesorno" != "n" && "$yesorno" != "Y" && "$yesorno" != "N" ]]; do
+		clear
+		echo -e '\E[31;40m'
+		echo "Huh?  Invalid entry --> $yesorno"
+		echo -e '\E[32;0m'
+		sleep 1
+		echo "Continue? (y=yes, n=no)"
+		read yesorno
+	done
+	if [[ "$yesorno" == "n" || "$yesorno" == "N" ]]; then
+		echo "Exiting Ubuntu-firewall installation script..."
+		exit 0
+	else
+		sleep 1
+		echo "Continuing installation..."
+		sleep 1
+	fi
+else
+	echo -e "\E[32;40m$IS_UBUNTU detected!\E[32;0m"
+	sleep 1
+	echo "Continuing installation..."
+	sleep 1
+fi
+#  Remove any existing firewall rules from the kernel table and clean up status file from previous firewall install
+IPT=`which iptables`
+$IPT -F
+$IPT -t nat --flush
+$IPT --zero
+$IPT --policy INPUT ACCEPT
+$IPT --policy OUTPUT ACCEPT
+$IPT --policy FORWARD ACCEPT
+echo 0 > /proc/sys/net/ipv4/ip_forward
+rm -f /var/run/ubuntu-firewall &> /dev/null
+#  Are we installing or removing Ubuntu-firewall?
+echo "Install Ubuntu-firewall, or Remove Ubuntu-firewall? (I=install, R=remove): "
+read installorremove
+while [[ "$installorremove" != "I" && "$installorremove" != "i" && "$installorremove" != "R" && "$installorremove" != "r" ]]; do
+	clear
+	echo -e '\E[31;40m'
+	echo "Huh?  Invalid entry --> $installorremove"
+	echo -e '\E[32;0m'
+	sleep 1
+	echo "Install Ubuntu-firewall, or Remove Ubuntu-firewall? (I=install, R=remove): "
+	read installorremove
+done
+#  Install selected
+if [[ "$installorremove" == "I" || "$installorremove" == "i" ]]; then
+	if [ -f /etc/default/ubuntu-firewall-cfg ]; then
+		echo "Previous installation detected!  Upgrading Ubuntu-firewall..."
+		mv /etc/default/ubuntu-firewall-cfg /etc/default/ubuntu-firewall-cfg.old
+		rm -f /etc/init.d/ubuntu-firewall.sh >&/dev/null 2>&1
+		rm -f /etc/init.d/ubuntu-firewall >&/dev/null 2>&1		
+	fi
+	cp -f ./ubuntu-firewall-cfg /etc/default/
+	cp -f ./ubuntu-firewall /etc/init.d/
+	cp -f ./ubuntu-firewall.1.gz /usr/share/man/man1/
+	chown root.root /etc/default/ubuntu-firewall-cfg /etc/init.d/ubuntu-firewall /usr/share/man/man1/ubuntu-firewall.1.gz >&/dev/null 2>&1
+	chmod 755 /etc/init.d/ubuntu-firewall >&/dev/null 2>&1
+	ln -s -f /etc/init.d/ubuntu-firewall /usr/bin/ubuntu-firewall >&/dev/null 2>&1
+	service=`ls -l /etc/rc2.d | grep ubuntu-firewall`
+	if [ "$service" == "" ]; then
+		echo "Configuring Ubuntu-firewall to auto-start on boot..."
+		update-rc.d ubuntu-firewall start 85 2 3 4 5 . stop 20  0 1 6 .
+	else
+		echo "Reconfiguring Ubuntu-firewall bootup settings..."
+		update-rc.d -f ubuntu-firewall.sh remove >&/dev/null 2>&1
+		update-rc.d -f ubuntu-firewall remove >&/dev/null 2>&1
+		sleep 1
+		update-rc.d ubuntu-firewall start 85 2 3 4 5 . stop 20  0 1 6 .
+	fi
+	#  Accomodates dynamic (DHCP) configurations and causes Ubuntu-firewall to reload upon obtaining a new IP address from the server
+	#  First remove legacy Ubuntu-firewall entry if it exists
+	if [ -f /etc/dhcp3/dhclient-exit-hooks ]; then
+		legacy_check=`grep 'ubuntu-firewall.sh' /etc/dhcp3/dhclient-exit-hooks`
+		if [ "$legacy_check" != "" ]; then
+			cat /etc/dhcp3/dhclient-exit-hooks | egrep -v '\/etc\/init\.d\/ubuntu-firewall\.sh' > /tmp/d-e-hooks
+			cp /tmp/d-e-hooks /etc/dhcp3/dhclient-exit-hooks
+			chmod 755 /etc/dhcp3/dhclient-exit-hooks
+			rm -f /tmp/d-e-hooks >&/dev/null 2>&1
+		fi
+	fi
+	if [ -f /etc/dhcp3/dhclient-exit-hooks ]; then
+		already_entered=`grep 'ubuntu-firewall' /etc/dhcp3/dhclient-exit-hooks`
+		if [ "$already_entered" == "" ]; then
+			echo "/etc/init.d/ubuntu-firewall reload" >> /etc/dhcp3/dhclient-exit-hooks
+			chmod 755 /etc/dhcp3/dhclient-exit-hooks
+		fi
+	else
+		echo "/etc/init.d/ubuntu-firewall reload" >> /etc/dhcp3/dhclient-exit-hooks
+		chmod 755 /etc/dhcp3/dhclient-exit-hooks
+	fi
+	if [[ -f /usr/bin/gedit && "$DISPLAY" != "" ]]; then
+		echo
+		echo "By default, Ubuntu-firewall is disabled in the configuration file.  You will need to open it up in an editor"
+		echo "and set the, 'DISABLED' directive to, 'no' in order to enable it.  While you have the configuration file open,"
+		echo "take some time to look at all the options so that you can optimally configure Ubuntu-firewall for your system."
+		echo -e '\E[1;33m'
+		echo "Would you like to open the config file using gedit (text editor) at this time?  (y=yes, n=no):"
+		echo -e '\E[32;0m'
+		read open_config
+		while [[ "$open_config" != "y" && "$open_config" != "n" && "$open_config" != "Y" && "$open_config" != "N" ]]; do
+			clear
+			echo -e '\E[31;40m'
+			echo "Huh?  Invalid entry --> $open_config"
+			sleep 1
+			echo -e '\E[1;33m'
+			echo "Would you like to open the config file using gedit (text editor) at this time?  (y=yes, n=no):"
+			echo -e '\E[32;0m'
+			read open_config
+		done
+		if [[ "$open_config" == "y" || "$open_config" == "Y" ]]; then
+			/usr/bin/gedit /etc/default/ubuntu-firewall-cfg 2> /dev/null
+			sleep 1
+			/etc/init.d/ubuntu-firewall start
+		else
+			echo -e '\E[1;33m'
+			echo "Don't forget to edit Ubuntu-firewall's configuration file (/etc/default/ubuntu-firewall-cfg) for your system!"
+			echo "At a minimum, you'll need to enable Ubuntu-firewall in the config file by setting the, 'DISABLED' directive"
+			echo "to, 'no'.  'gksudo gedit /etc/default/ubuntu-firewall-cfg' will open it up in a text editor for you to make the"
+			echo "necessary changes.  Enjoy!"
+			echo -e '\E[32;0m'
+		fi
+	else
+		if [ -f /usr/bin/pico ]; then
+			echo -e '\E[1;33m'
+			echo "Would you like to open the config file in pico (text editor) at this time?  (y=yes, n=no):"
+			echo -e '\E[32;0m'
+			read open_config
+			while [[ "$open_config" != "y" && "$open_config" != "n" && "$open_config" != "Y" && "$open_config" != "N" ]]; do
+				clear
+				echo -e '\E[31;40m'
+				echo "Huh?  Invalid entry --> $open_config"
+				sleep 1
+				echo -e '\E[1;33m'
+				echo "Would you like to open the config file in pico (text editor) at this time?  (y=yes, n=no):"
+				echo -e '\E[32;0m'
+				read open_config
+			done
+			if [[ "$open_config" == "y" || "$open_config" == "Y" ]]; then
+				/usr/bin/pico /etc/default/ubuntu-firewall-cfg
+				sleep 1
+				/etc/init.d/ubuntu-firewall start
+			else
+				echo -e '\E[1;33m'
+				echo "Don't forget to edit Ubuntu-firewall's configuration file (/etc/default/ubuntu-firewall-cfg) for your system!"
+				echo "At a minimum, you'll need to enable Ubuntu-firewall in the config file by setting the, 'DISABLED' directive"
+				echo "to, 'no'.  'sudo pico /etc/default/ubuntu-firewall-cfg' will open it up in a text editor for you to make the"
+				echo "necessary changes.  Enjoy!"
+				echo -e '\E[32;0m'
+			fi
+		fi
+	fi
+	exit 0
+fi
+#  Un-install selected
+if [[ "$installorremove" == "R" || "$installorremove" == "r" ]]; then
+	echo "Removing Ubuntu-firewall..."
+	sleep 1
+	rm -f /etc/default/ubuntu-firewall-cfg >&/dev/null 2>&1
+	rm -f /etc/init.d/ubuntu-firewall.sh >&/dev/null 2>&1
+	rm -f /etc/init.d/ubuntu-firewall >&/dev/null 2>&1
+	rm -f /usr/bin/ubuntu-firewall >&/dev/null 2>&1
+	rm -f /usr/share/man/man1/ubuntu-firewall.1.gz >&/dev/null 2>&1
+	update-rc.d -f ubuntu-firewall.sh remove >&/dev/null 2>&1
+	update-rc.d -f ubuntu-firewall remove >&/dev/null 2>&1
+	if [ -f /etc/dhcp3/dhclient-exit-hooks ] ; then
+		cat /etc/dhcp3/dhclient-exit-hooks | egrep -v '\/etc\/init\.d\/ubuntu-firewall\.sh|\/etc\/init\.d\/ubuntu-firewall' > /tmp/d-e-hooks
+		cp /tmp/d-e-hooks /etc/dhcp3/dhclient-exit-hooks >&/dev/null 2>&1
+		chmod 755 /etc/dhcp3/dhclient-exit-hooks >&/dev/null 2>&1
+		rm -f /tmp/d-e-hooks >&/dev/null 2>&1
+	fi
+	echo "Ubuntu-firewall has been removed from your system!"
+	exit 0
+fi
+exit 1
+

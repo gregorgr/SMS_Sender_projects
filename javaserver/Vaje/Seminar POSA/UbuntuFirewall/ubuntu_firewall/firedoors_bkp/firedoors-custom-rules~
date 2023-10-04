@@ -1,0 +1,19 @@
+# custom rules file sample
+# iptables -A INPUT --mac-source 00:19:B9:50:53:3B -j ACCEPT
+# CUSTOM RULE PORT 22 and IP
+
+# iptables -A TRUSTED -i eth0 -p tcp -m tcp -sport 22 -m tcp -s 10.11.1.87 -j ACCEPT 
+#$IPT -A INPUT -i $EXTIF -s 192.168.0.0/24 -j ACCEPT # Drops ssh from outside your LAN
+
+# ssh 23710
+$IPT -A INPUT -i $EXTIF -p tcp -m tcp -s 192.168.1.0/24 --dport 23710 -j ACCEPT
+$IPT -A INPUT -i $EXTIF -p tcp -m tcp -s 84.255.230.212 --dport 23710 -j ACCEPT
+$IPT -A INPUT -i $EXTIF -p tcp -m tcp -s 84.255.253.212 --dport 23710 -j ACCEPT
+
+
+# mySql 3355
+$IPT -A INPUT -i $EXTIF -p tcp -m tcp -s 192.168.1.0/24 --dport 3355 -j ACCEPT
+$IPT -A INPUT -i $EXTIF -p tcp -m tcp -s 84.255.230.212 --dport 3355 -j ACCEPT
+$IPT -A INPUT -i $EXTIF -p tcp -m tcp -s 84.255.253.212 --dport 3355 -j ACCEPT 
+
+

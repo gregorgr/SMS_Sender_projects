@@ -1,0 +1,27 @@
+#! /usr/bin/perl
+
+
+if (($ARGV[0] eq "") or ($ARGV[1] eq "")) {
+  printf "ERROR: argument is missing\n";
+  printf "usage: deny-ip-generator.pl <deny-ip text files> <output file>\n";
+  exit(1);
+}
+
+# Open the 2 files
+open(input_file, "$ARGV[0]") or die "ERROR: Unable to open $ARGV[0]\n";
+open(output_file, "> $ARGV[1]") or die "ERROR: Unable to open $ARGV[2]\n";
+
+printf output_file "#! /usr/bin/bash \n\n";
+
+# Process each line of info file   
+foreach (<input_file>) {
+  chomp($_);
+  if ($_ =~ /^\s*#/) {}
+  elsif ($_ ne "") {
+    printf output_file "iptables -A INPUT -s $_ -j DROP\n";
+    printf output_file "iptables -A OUTPUT -d $_ -j DROP\n";
+  }
+}
+
+close input_file;
+close output_file;

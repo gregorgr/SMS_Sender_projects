@@ -1,0 +1,149 @@
+#!/bin/bash
+echo "terting "
+
+IP_BLACKLIST="/_xroot/webx/ubuntu_firewall/ip_blacklist.txt"
+#  Function to load the firewall policies and rules
+start () {
+	
+	echo "tester"
+	OPEN_TCP_PORTS="12 22 33"
+	DOS_BLOCK="yes"
+
+
+	if [ "$OPEN_TCP_PORTS" != "" ]; then
+		for i in $OPEN_TCP_PORTS; do
+			echo "- port: $i"
+			# DOS prevention
+			if [ "$DOS_BLOCK" == "yes" ]; then
+				echo "DOS BLOCK: $i"
+				if [[ "$i" == "80" || "$i" == "443" ]]; then
+					echo "policy for apache ports"
+	
+				fi
+				if [[ "$i" != "80" || "$i" != "443" ]]; then
+					echo " policy for non apache ports"
+	
+				fi
+			else
+				echo " else"
+			fi
+		done
+
+	fi
+
+
+}
+#  Function to stop the firewall (sets default policies back to ACCEPT and removes all rules)
+stop () {
+	$IPT -F
+	#$IPT -t nat --flush
+        $IPT --zero
+        $IPT --policy INPUT ACCEPT
+        $IPT --policy OUTPUT ACCEPT
+        ##$IPT --policy FORWARD ACCEPT
+	if [ "$NAT_IF" != "" ]; then
+		echo 0 > /proc/sys/net/ipv4/ip_forward
+	fi
+	rm -f /var/run/ubuntu-firewall
+}
+#  Function to lock the system down (no traffic will flow at all)
+lockdown () {
+	$IPT -F
+	$IPT --policy INPUT DROP
+	$IPT --policy OUTPUT DROP
+	$IPT --policy FORWARD DROP
+	touch /var/run/ubuntu-firewall
+	$logsuccess "Ubuntu-firewall is LOCKED DOWN.  No data will flow!"
+}
+#  Function to get status and list the firewall policies/rules
+status () {
+	clear
+	if ! test -r /var/run/ubuntu-firewall; then
+		$logsuccess "Ubuntu-firewall is NOT active!"
+		sleep 1
+		echo
+		echo ">>>>>>>>>>      Filter table:      <<<<<<<<<<"
+		echo
+		$IPT -t filter -L -n
+		echo
+	else
+		$logsuccess "Ubuntu-firewall is active!"
+		sleep 1
+		echo
+		echo ">>>>>>>>>>      Filter table:      <<<<<<<<<<"
+		echo
+		$IPT -t filter -L -n -v
+		echo
+		if [ "$NAT_IF" != "" ]; then
+			echo
+			echo ">>>>>>>>>>       NAT table:        <<<<<<<<<<"
+			echo
+			$IPT -t nat -L -n -v
+			echo
+		fi
+	fi
+}
+ver () {
+	version=`head $0 | grep Version | cut -d ':' -f2 | cut -d ' ' -f3 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+	echo -e "\E[32;40mUbuntu-firewall version: $version\E[32;0m"
+}
+applyipblacklist(){
+	echo "applying custom IP blacklist...."
+	## blacklist is a simple file with ip addresses seperated by newline
+	# $IP_BLACKLIST
+	if [ -f $IP_BLACKLIST ]
+	then
+		# file exists
+		#$IPT -N ipblacklist #-N creates a New, user defined chain (blacklist for example).
+		while read line
+		do
+			echo $line
+			#$IPT -A ipblacklist -s $line -j DROP
+		done < "$IP_BLACKLIST"
+	else
+		echo "Error reading custom blacklist file:"	
+		echo "$IP_BLACKLIST"
+	fi
+}
+# Call the start, stop, reload, status, lockdown, and ver functions
+case "$1" in
+    start)
+	#$logbegin "Starting Ubuntu-firewall..."
+	if ! test -r /var/run/ubuntu-firewall; then
+		start
+# 	#else
+		#$logfail "Already started!"
+	fi
+	 #$logend $?
+    ;;
+    stop)
+	$logbegin "Stopping Ubuntu-firewall..."
+	if test -r /var/run/ubuntu-firewall; then
+		stop
+# 	else
+		#$logfail "Already stopped!"
+	fi
+	#$logend $?
+    ;;
+    reload)
+	$logbegin "Reloading Ubuntu-firewall..."
+	stop
+	sleep 1
+	start
+	#$logend $?
+    ;;
+    status)
+	status
+    ;;
+    lockdown)
+	lockdown
+    ;;
+    ver)
+	ver
+    ;;
+*)
+    echo -e "\E[31;40mUsage: $0 {start|stop|reload|status|lockdown|ver}\E[32;0m"
+    exit 1
+    ;;
+esac
+exit 0

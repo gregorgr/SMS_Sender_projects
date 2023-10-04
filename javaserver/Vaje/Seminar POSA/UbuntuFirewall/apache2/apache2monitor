@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Version: 0.2
+#
+# Script Description: ^M
+# This is basic monitor, that monitors if Apache2 is running^M
+# if by any chance or DOS attack the service is down:^M
+# if so, it will (re)start Apache2 service!!!
+# script location:  /usr/bin^M
+PIDS=`pidof apache2`
+ERR_LOG_FILE="/var/log/apache2mon.log"^M
+# vatianta 2: sam testiram dolzino
+if [ ${#PIDS}  -gt 1 ]; then
+        echo "Apache2 is running!"
+else
+        LOG_MSG="`date` `time` Apache2 monitor ERROR: Apache2 NOT running! Starting....."
+        echo "$LOG_MSG"
+        /etc/init.d/apache2 start
+        echo "`date` [MESSAGE] $0 Apache2 monitor ERROR: Apache2 NOT running! Starting....." >> $ERR_LOG_FILE
+fi
+# sample http://tlug.dnho.net/?q=node/213

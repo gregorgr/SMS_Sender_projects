@@ -1,0 +1,506 @@
+#!/bin/bash
+######################################################
+#       Firedoors                                    #
+#       Server firewall with IP blocking and         #
+#       special autorised IP to PORT rules           #
+#       DOES NOT SUPPORT NAT FUNCTIONS               #
+#       update made by Gregor Grajzar                #
+#	Version:  1.0				     #
+#       Updated:  14 August 2007                     #
+#       Updated:  01 April 2009                      #
+#                                                    #
+#                                                    #
+#       Original version (Ubuntu-firewall):          #
+#       Ubuntu-firewall by Robert C. Pectol          #
+#       http://rob.pectol.com/ubuntu-firewall.tgz    #
+######################################################
+
+#  Load LSB init-functions
+if [ -r /lib/lsb/init-functions ]; then
+	. /lib/lsb/init-functions
+	logbegin="log_begin_msg"
+	logsuccess="log_success_msg"
+	logfail="log_failure_msg"
+	logend="log_end_msg"
+else
+	logbegin="echo"
+	logsuccess="echo"
+	logfail="echo"
+	logend="echo"
+fi
+#  Read the firewall configuration file (Custom config file may be specified as the second argument.)
+if [[ "$2" != "" && "$1" != "stop" && "$1" != "ver" ]]; then
+	echo "Custom configuration file specified."
+	config=$2
+	. $config &>/dev/null
+	if [ "$DISABLED" == "" ]; then
+		$logfail "Configuration file specified is not complete!  Exiting..."
+		exit 1
+	fi
+else
+	if [[ "$1" != "stop" && "$1" != "ver" ]]; then
+		if test -f /etc/firedoors/firedoors-config; then
+			. /etc/firedoors/firedoors-config
+		else
+			$logfail "Configuration file not specified and the default was not found!  Exiting..."
+			exit 1
+		fi
+	fi
+fi
+#  Check to see if Ubuntu-firewall is disabled in the config file
+if [[ "$DISABLED" == "yes" && "$1" != "stop" && "$1" != "status" && "$1" != "ver" ]]; then
+	$logfail "Firedorrs has been DISABLED in the config file!  Exiting..."
+	exit 1
+fi
+#  Check to see that we are ROOT!
+exec_user=`/usr/bin/whoami`
+if [ "$exec_user" != "root" ] ; then
+	$logfail "Firedorrs must be executed with root privileges (ex: sudo firedorrs)!"
+	exit 1
+fi
+#  Locate the iptables tool
+IPT=`which iptables`
+if [ "$IPT" == "" ]; then
+	$logfail "Error locating the iptables tool!  Exiting..."
+       	exit 1
+fi
+#  Locate modprobe
+MODPROBE=`which modprobe`
+#  Locate ifconfig
+IFCONFIG=`which ifconfig`
+#  Function to load the firewall policies and rules
+start () {
+	#  Is this an Ubuntu System?
+	OS_FILE_LOC="`ls /etc | grep release`"
+	OS_INFO="`cat /etc/$OS_FILE_LOC`"
+	IS_UBUNTU="`echo $OS_INFO | egrep 'Debian|Ubuntu'`"
+	if [ "$IS_UBUNTU" == "" ]; then
+		if [ "$VERBOSE" == "yes" ]; then
+			echo -e "\E[1;33mNon-Ubuntu system detected!  Safe exit mode will be enabled.  Continuing to load...\E[32;0m"
+		fi
+		non_ubuntu="yes"
+		set -e
+	fi
+	#  Get the external interface and its IP address
+	if [ "$VERBOSE" == "yes" ]; then
+		echo -e "\E[32;40mDetecting external interface IP address...\E[32;0m"
+	fi
+	if [ "$EXTIF" == "auto" ]; then
+		pass=0
+		if [ "$IF_BLACKLIST" != "" ]; then
+			IF_BLACKLIST=`echo $IF_BLACKLIST | awk '{$1=$1;print}' | sed 's/ /|/g'`
+			EXTIF=`$IFCONFIG | egrep -v '^lo' | egrep -v "$IF_BLACKLIST" | cut -d ' ' -f1 \
+			| awk NF | head -n 1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+			if [ "$EXTIF" == "" ]; then
+				$logfail "Interface auto-detection failed!  Please manually assign it in the config file!"
+				exit 1
+			fi
+			if [ "$VERBOSE" == "yes" ]; then
+				echo -e "\E[32;40mTrying interface $EXTIF...\E[32;0m"
+			fi
+			EXTIP=`$IFCONFIG $EXTIF 2>/dev/null | egrep 'inet ad|inet Ad' | cut -d ':' -f2 \
+			| cut -d ' ' -f1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+			while [[ "$pass" -lt "10" && "$EXTIP" == "" ]]; do
+				EXTIF=`$IFCONFIG | egrep -v '^lo' | egrep -v "$IF_BLACKLIST|$EXTIF" | cut -d ' ' -f1 \
+				| awk NF | head -n 1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+				if [ "$EXTIF" != "" ]; then
+					if [ "$VERBOSE" == "yes" ]; then
+						echo -e "\E[32;40mTrying interface $EXTIF...\E[32;0m"
+					fi
+					EXTIP=`$IFCONFIG $EXTIF 2>/dev/null | egrep 'inet ad|inet Ad' | cut -d ':' -f2 \
+					| cut -d ' ' -f1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+				else
+					EXTIF="null"
+				fi
+				sleep .5
+				pass=$(($pass + 1))
+			done
+		else
+			EXTIF=`$IFCONFIG | egrep -v '^lo' | cut -d ' ' -f1 | awk NF \
+			| head -n 1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+			if [ "$EXTIF" == "" ]; then
+				$logfail "Interface auto-detection failed!  Please manually assign it in the config file!"
+				exit 1
+			fi
+			if [ "$VERBOSE" == "yes" ]; then
+				echo -e "\E[32;40mTrying interface $EXTIF...\E[32;0m"
+			fi
+			EXTIP=`$IFCONFIG $EXTIF 2>/dev/null | egrep 'inet ad|inet Ad' | cut -d ':' -f2 \
+			| cut -d ' ' -f1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+			while [[ "$pass" -lt "10" && "$EXTIP" == "" ]]; do
+				EXTIF=`$IFCONFIG | egrep -v '^lo' | egrep -v "$EXTIF" | cut -d ' ' -f1 \
+				| awk NF | head -n 1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+				if [ "$EXTIF" != "" ]; then
+					if [ "$VERBOSE" == "yes" ]; then
+						echo -e "\E[32;40mTrying interface $EXTIF...\E[32;0m"
+					fi
+					EXTIP=`$IFCONFIG $EXTIF 2>/dev/null | egrep 'inet ad|inet Ad' | cut -d ':' -f2 \
+					| cut -d ' ' -f1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+				else
+					EXTIF="null"
+				fi
+				sleep .5
+				pass=$(($pass + 1))
+			done
+		fi
+		if [ "$EXTIP" == "" ]; then
+			$logfail "Couldn't determine external IP address on $EXTIF!  Exiting..."
+			exit 1
+		fi
+		if [ "$VERBOSE" == "yes" ]; then
+			echo -e "\E[1;33m* $EXTIF * \E[32;0m\E[32;40mauto-selected as external interface...\E[32;0m"
+		fi
+	else
+		EXTIP=`$IFCONFIG $EXTIF 2>/dev/null | egrep 'inet ad|inet Ad' | cut -d ':' -f2 \
+		| cut -d ' ' -f1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+		if [ "$EXTIP" == "" ]; then
+			$logfail "Couldn't determine external IP address on $EXTIF!  Exiting..."
+			exit 1
+		fi
+	fi
+	NETWORK_BCAST=`$IFCONFIG $EXTIF 2>/dev/null | egrep 'inet ad|inet Ad' | cut -d ':' -f3 \
+	| cut -d ' ' -f1 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+	if [ "$VERBOSE" == "yes" ]; then
+		echo -e "\E[32;40mExternal interface IP configuration looks good!  Loading ruleset...\E[32;0m"
+	fi
+	# Load some connection-tracking modules
+	# FTP
+	$MODPROBE ip_conntrack_ftp
+	# IRC
+	$MODPROBE ip_conntrack_irc
+	#  Set some script variables
+	LOOPIF="lo"                             # Loopback interface
+	LOOPIP="127.0.0.0/8"                    # Loopback IP address range
+	CLASS_D_MULTI="224.0.0.0/4"             # Class D Mulitcast address range
+	BCAST_SRC="0.0.0.0"                     # Broadcast source address
+	BCAST_DST="255.255.255.255"             # Broadcast destination address
+	MSNETWORKING="137:139"			# Micro$oft Networking port range
+	#  Remove any existing rules from chains, clear their counters, and set default policies
+	$IPT -F
+	$IPT -X
+	$IPT --zero
+	$IPT --flush FORWARD
+	$IPT -t nat --flush
+	if [ "$NAT_ONLY" != "yes" ]; then
+		$IPT --policy INPUT DROP
+		$IPT --policy OUTPUT DROP
+		$IPT --policy FORWARD DROP
+	else
+		$IPT --policy INPUT ACCEPT
+		$IPT --policy OUTPUT ACCEPT
+		$IPT --policy FORWARD DROP
+		if [ "$VERBOSE" == "yes" ]; then
+			echo -e "\E[32;40mNAT-only configuration selected!\E[32;0m"
+		fi
+	fi
+
+	######## DROPPED ########
+
+	# Drop spoofed packets
+	$IPT -A INPUT -i $EXTIF -s $LOOPIP -j DROP
+	# Drop malformed broadcast packets
+	$IPT -A INPUT -i $EXTIF -s $BCAST_DST -j DROP
+	$IPT -A INPUT -i $EXTIF -d $BCAST_SRC -j DROP
+	# Drop Class D multicast traffic which isn't carrying the UDP protocol
+	$IPT -A INPUT -i $EXTIF -p ! udp -d $CLASS_D_MULTI -j DROP
+	# Drop fragmented ICMP packets (these should never be fragmented, really!)
+	$IPT -A INPUT --fragment -p icmp -d $EXTIP -j DROP
+
+	######## ACCEPTED ########
+	# Allow loopback interface traffic
+	$IPT -A INPUT -i $LOOPIF -j ACCEPT
+	$IPT -A OUTPUT -o $LOOPIF -j ACCEPT
+	# Allow network broadcast traffic in
+	$IPT -A INPUT -i $EXTIF -d $NETWORK_BCAST -j ACCEPT
+	$IPT -A INPUT -i $EXTIF -d $BCAST_DST -j ACCEPT
+	# Allow some ICMP message types
+	$IPT -A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT
+	$IPT -A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
+	# If you have an internal "trusted" network interface specified, then allow traffic on it
+	if [ "$INTIF" != "" ]; then
+		if [ "$INTIF" == "$EXTIF" ]; then
+			if [ "$VERBOSE" == "yes" ]; then
+				echo -e "\E[31;40mINTIF and EXTIF can NOT be the same interface!  Ignoring INTIF and continuing...\E[32;0m"
+			fi
+			INTIF=""
+		fi
+	fi
+	if [ "$INTIF" != "" ]; then
+		INTIF_UP=`$IFCONFIG | grep "$INTIF"`
+		if [ "$INTIF_UP" == "" ]; then
+			if [ "$VERBOSE" == "yes" ]; then
+				echo -e "\E[31;40mInternal interface $INTIF seems to be down!  Ignoring INTIF and continuing...\E[32;0m"
+			fi
+		else
+			$IPT -A INPUT -i $INTIF -j ACCEPT
+			$IPT -A OUTPUT -o $INTIF -j ACCEPT
+		fi
+	fi
+	#  Connection-tracking
+	$IPT -A OUTPUT -o $EXTIF -s $EXTIP -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+	$IPT -A INPUT -i $EXTIF -d $EXTIP -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+	######## CUSTOM BLACKLIST #########
+	applyipblacklist
+	######## CUSTOM BLACKLIST END #########
+
+	######## CUSTOM TRUSTED LIST #########
+	applytrusted
+	######## CUSTOM TRUSTED LIST END  #########
+
+	#  System response to PINGs
+	if [ "$ALLOW_PINGS" == "yes" ]; then
+		$IPT -A INPUT -i $EXTIF -p icmp --icmp-type echo-request -d $EXTIP -m limit --limit 60/minute --limit-burst 3 -j ACCEPT
+		if [ "$VERBOSE" == "yes" ]; then
+			echo -e "\E[32;40mSystem will respond to ping (ICMP echo-request) traffic on external interface.\E[32;0m"
+		fi
+	fi
+	###     Custom Rules    ###
+
+	if [ "$CUSTOM_RULES" != "" ]; then
+		echo "Applying custom rules:"
+		set -e
+		if [ "$VERBOSE" == "yes" ]; then
+			echo -e "\E[32;40m* found and are being applied...\E[32;0m"
+		fi
+		. $CUSTOM_RULES
+		set +e
+	fi
+
+	###	Server Services to the 'Net	###
+
+	if [ "$VERBOSE" == "yes" ]; then
+		if [[ "$OPEN_TCP_PORTS" != "" || "$OPEN_UDP_PORTS" != "" || "$ALLOW_FTP" == "yes" || "$ALLOW_MSNETWORKING" == "yes" ]]; then
+			echo -e "\E[32;40mLoading ruleset for system servers...\E[32;0m"
+		fi
+	fi
+	if [ "$OPEN_TCP_PORTS" != "" ]; then
+		for i in $OPEN_TCP_PORTS; do
+			# DOS prevention
+			if [ "$DOS_BLOCK" == "yes" ]; then
+				if [[ "$i" == "80" || "$i" == "443" ]]; then
+					# policy for apache ports
+#$IPT -I INPUT -i $EXTIF -p TCP -m state --state NEW -m limit --limit 30/minute --limit -burst 5 -j ACCEPT
+	$IPT -A INPUT -i $EXTIF -p tcp --syn -d $EXTIP --dport $i -m state --state NEW -m limit --limit $DOS_TIME_LIMIT_80_443 --limit-burst 5 -j ACCEPT
+				fi
+				if [[ "$i" != "80" || "$i" != "443" ]]; then
+					# policy for non apache ports
+#$IPT -A INPUT -i $EXTIF -p tcp --syn -d $EXTIP --dport $i -m state --state NEW -j ACCEPT
+	$IPT -A INPUT -i $EXTIF -p tcp --syn -d $EXTIP --dport $i -m state --state NEW -m limit --limit $DOS_TIME_LIMIT_DEFAULT --limit-burst 5 -j ACCEPT
+				fi
+			else
+				$IPT -A INPUT -i $EXTIF -p tcp --syn -d $EXTIP --dport $i -m state --state NEW -j ACCEPT
+			fi
+			if [ "$VERBOSE" == "yes" ]; then
+				echo -e "\E[32;40mTCP port $i is now accessible.\E[32;0m"
+			fi
+		done
+	fi
+	if [ "$OPEN_UDP_PORTS" != "" ]; then
+		for i in $OPEN_UDP_PORTS; do
+			$IPT -A INPUT -i $EXTIF -p udp -d $EXTIP --dport $i -m state --state NEW -j ACCEPT
+			if [ "$VERBOSE" == "yes" ]; then
+				echo -e "\E[32;40mUDP port $i is now accessible.\E[32;0m"
+			fi
+		done
+	fi
+	# FTP Server
+	if [ "$ALLOW_FTP" == "yes" ]; then
+		# control connections
+		$IPT -A INPUT -i $EXTIF -p tcp --syn -d $EXTIP --dport 21 -m state --state NEW -j ACCEPT
+		# port mode FTP (pasv mode is too risky to the server so it's not allowed)
+		$IPT -A INPUT -i $EXTIF -p tcp ! --syn -d $EXTIP --dport 20 -m state --state NEW -j ACCEPT
+		if [ "$VERBOSE" == "yes" ]; then
+			echo -e "\E[32;40mYour FTP server is now accessible.\E[32;0m"
+		fi
+	fi
+	# Micro$oft Networking on external interface
+	if [ "$ALLOW_MSNETWORKING" == "yes" ]; then
+		$IPT -A INPUT -i $EXTIF -p tcp -d $EXTIP --dport $MSNETWORKING -m state --state NEW -j ACCEPT
+		$IPT -A INPUT -i $EXTIF -p udp -d $EXTIP --dport $MSNETWORKING -m state --state NEW -j ACCEPT
+		$IPT -A INPUT -i $EXTIF -p tcp -d $EXTIP --dport 445 -m state --state NEW -j ACCEPT
+		$IPT -A INPUT -i $EXTIF -p udp --sport $MSNETWORKING -d $EXTIP -m state --state NEW -j ACCEPT
+		$IPT -A INPUT -i $EXTIF -p tcp --sport 445 -d $EXTIP -m state --state NEW -j ACCEPT
+		if [ "$VERBOSE" == "yes" ]; then
+			echo -e "\E[32;40mMicrosoft Networking is now accessible.\E[32;0m"
+		fi
+	fi
+	#  If we are NOT running an Ident server, then reject auth requests instead of dropping them - avoids long timeouts!
+	auth_open=`echo $OPEN_TCP_PORTS | grep 113` || true
+	if [ "$auth_open" == "" ]; then
+	        $IPT -A INPUT -p tcp -d $EXTIP --dport 113 -j REJECT --reject-with tcp-reset
+	fi
+
+	#  Logging
+	if [ "$LOG_PACKETS" == "yes" ]; then
+		$IPT -A INPUT -j LOG --log-prefix "Fell off input chain: "
+		$IPT -A OUTPUT -j LOG --log-prefix "Fell off output chain: "
+		if [ "$NAT_IF" != "" ]; then
+			$IPT -A FORWARD -j LOG --log-prefix "Fell off forward chain: "
+		fi
+		#  Log packets with impossible addresses
+                for f in /proc/sys/net/ipv4/conf/*/log_martians; do
+                        echo 1 > $f
+                done
+		if [ "$VERBOSE" == "yes" ]; then
+			echo -e "\E[32;40mPacket logging is active.\E[32;0m"
+		fi
+	else
+		for f in /proc/sys/net/ipv4/conf/*/log_martians; do
+			echo 0 > $f
+		done
+	fi
+	##if [ "$non_ubuntu" == "yes" ]; then
+	##	if [ "$VERBOSE" == "yes" ]; then
+	##		echo -e "\E[1;33mNon-Ubuntu system detected but script executed ok!  However, check the output above, for any errors.\E[32;0m"
+	##	fi
+	##fi
+	touch /var/run/firedoors
+}
+#  Function to stop the firewall (sets default policies back to ACCEPT and removes all rules)
+stop () {
+	$IPT -F
+	$IPT -t nat --flush
+        $IPT --zero
+	######## CUSTOM BLACKLIST #########
+	## those people are hackers so we need to block them always
+	if [ "$IP_BLACKLIST_ALWAYS" == "yes" ]; then
+		applyipblacklist
+	fi
+        $IPT --policy INPUT ACCEPT
+        $IPT --policy OUTPUT ACCEPT
+        $IPT --policy FORWARD ACCEPT
+	if [ "$NAT_IF" != "" ]; then
+		echo 0 > /proc/sys/net/ipv4/ip_forward
+	fi
+	rm -f /var/run/firedoors
+}
+#  Function to lock the system down (no traffic will flow at all)
+lockdown () {
+	$IPT -F
+	$IPT --policy INPUT DROP
+	$IPT --policy OUTPUT DROP
+	$IPT --policy FORWARD DROP
+	touch /var/run/firedoors
+	#ubuntu-firewall
+	$logsuccess "Firedorrs are LOCKED DOWN.  No data will flow!"
+}
+#  Function to get status and list the firewall policies/rules
+status () {
+	clear
+	if ! test -r /var/run/firedoors; then
+		$logsuccess "Firedorrs are NOT active!"
+		sleep 1
+		echo
+		echo ">>>>>>>>>>      Filter table:      <<<<<<<<<<"
+		echo
+		$IPT -t filter -L -n
+		echo
+	else
+		$logsuccess "Firedorrs are active!"
+		sleep 1
+		echo
+		echo ">>>>>>>>>>      Filter table:      <<<<<<<<<<"
+		echo
+		$IPT -t filter -L -n -v
+		echo
+		if [ "$NAT_IF" != "" ]; then
+			echo
+			echo ">>>>>>>>>>       NAT table:        <<<<<<<<<<"
+			echo
+			$IPT -t nat -L -n -v
+			echo
+		fi
+	fi
+}
+ver () {
+	version=`head $0 | grep Version | cut -d ':' -f2 | cut -d ' ' -f3 | sed 's/^[ \t]*//;s/[ \t]*$//'`
+	echo -e "\E[32;40mFiredorrs version: $version\E[32;0m"
+}
+applyipblacklist(){
+	## blacklist is a simple file with ip addresses seperated by newline
+	# $IP_BLACKLIST
+	if [ "$IP_BLACKLIST" != "" ]; then
+		if [ -f $IP_BLACKLIST ]; then
+			# file exists
+			echo "applying custom IP blacklist...."
+			$IPT -N ipblacklist #-N creates a New, user defined chain (blacklist for example).
+			while read line
+			do
+				#echo $line
+				$IPT -A ipblacklist -s $line -j DROP
+			done < "$IP_BLACKLIST"
+		else
+			echo "Error reading custom blacklist file:"	
+			echo "$IP_BLACKLIST"
+		fi
+	fi
+}
+applytrusted(){
+	## TRUSTED SPECIAL LIST
+	if [ "$TRUSTED_IP" != "" ]; then
+		for ip in $TRUSTED_IP; do
+
+			## 
+			echo "Trusted address $ip ports tcp: $TRUSTED_PORTS_TCP, udp: $TRUSTED_PORTS_UDP "
+			if [[ "$TRUSTED_PORTS_TCP" != "" || "$TRUSTED_PORTS_UDP" != "" ]]; then
+				if [ "$TRUSTED_PORTS_TCP" != "" ]; then
+					for port in $TRUSTED_PORTS_TCP; do
+						$IPT -A INPUT -i $EXTIF -p tcp -m tcp -s $ip --dport $port -j ACCEPT 
+					done
+				fi
+				if [ "$TRUSTED_PORTS_UDP" != "" ]; then
+					for port in $TRUSTED_PORTS_UDP; do
+						$IPT -A INPUT -i $EXTIF -p udp -m udp -s $ip --dport $port -j ACCEPT
+					done
+				fi
+			else
+				## only IP is defined
+				$IPT -A INPUT -i $EXTIF -s $ip -j ACCEPT # Drops ssh from outside your LAN
+			fi
+		done
+	fi
+}
+# Call the start, stop, reload, status, lockdown, and ver functions
+case "$1" in
+    start)
+	$logbegin "Starting Firedoors firewall..."
+	if ! test -r /var/run/firedoors; then
+		start
+	else
+		$logfail "Already started!"
+	fi
+	$logend $?
+    ;;
+    stop)
+	$logbegin "Stopping Firedoors firewall..."
+	if test -r /var/run/firedoors; then
+		stop
+	else
+		$logfail "Already stopped!"
+	fi
+	$logend $?
+    ;;
+    reload)
+	$logbegin "Reloading Firedoors firewall..."
+	stop
+	sleep 1
+	start
+	$logend $?
+    ;;
+    status)
+	status
+    ;;
+    lockdown)
+	lockdown
+    ;;
+    ver)
+	ver
+    ;;
+*)
+    echo -e "\E[31;40mUsage: $0 {start|stop|reload|status|lockdown|ver}\E[32;0m"
+    exit 1
+    ;;
+esac
+exit 0
+

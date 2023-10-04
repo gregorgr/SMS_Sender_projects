@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7 ie6 ie"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie10 lt-ie9 lt-ie8 ie7 ie"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie10 lt-ie9 ie8 ie"><![endif]-->
+<!--[if IE 9]><html class="no-js lt-ie10 ie9 ie"><![endif]-->
+<!--[if gt IE 9]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="keywords" content="fiš, fakulteta za informacijske študije, informatika, novo mesto, študij informatike, magisterij, doktorat, univerzitetni, visokošolski">
+  <meta name="description" content="Tukaj smo zato, da ti pomagamo osvojiti vsa znanja in veš�?ine, ki jih potrebuješ, da lahko to resni�?no postaneš. Pridi na FIŠ in (p)ostani informatik po srcu. ">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  
+  <meta name="google-site-verification" content="HPPU458-zJzVJlGAwiN0Sr7tn4U0rBD01FoLQiDEE_4">
+  
+  <title>Študiraj v Novem mestu | FIŠ - Fakulteta za informacijske študije</title>
+  <script src="/inc/v-1/js/vendor/modernizr-2.6.2.min.js"></script>
+  <!--script src="//www.google.com/jsapi" type="text/javascript"></script-->
+  <script type="text/javascript">
+    var g_lang_S = 'si';
+    var g_lang_I = '0';
+    var g_search_query_S = '';
+
+    /*
+    google.load('search', '1', {language : 'sl'});*/
+  </script>
+  <!--[if !IE]><!--><script>if(/*@cc_on!@*/false){document.documentElement.className+=' ie10 ie';}</script><!--<![endif]-->
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="/inc/v-1/css/normalize.css">
+  <link rel="stylesheet" href="/inc/v-1/css/main.css?dc=20171211">
+  
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '212440809546891');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=212440809546891&ev=PageView&noscript=1"></noscript>
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-5140440-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-5140440-1');
+    gtag('config', 'AW-937333704');
+  </script>
+  
+</head>
+<body class="si home">
+    <!--[if lt IE 7]>
+        <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+    <![endif]-->
+    <div class="cookie-note">
+    <a href="./?cookieu=ok" class="close-cookie">Zapri</a>
+    <strong>OBVESTILO O PIŠKOTKIH:</strong><br> To spletno mesto uporablja <a href="/si/varnost/piskotki/#p1">piškotke</a>  za namen izboljšave delovanja spletnega mesta. Ve�? informacij najdete v naših <a href="/si/varnost/piskotki/">Pravilih o rabi piškotkov</a>.
+</div>
+
+    <header>
+        
+        <h2><a href="/si/"><img src="/img/logo-fis-en.png" alt="FIŠ - Fakulteta za informacijske študije" title="FIŠ - Fakulteta za informacijske študije"></a></h2>
+        <ul class="navigation language">
+<li><a href="/si/" class="on">Slovensko</a></li>
+<li class="last"><a href="/en/">English</a></li>
+</ul>
+
+        <form method="get" action="/si/iskanje/" class="form search" name="frmSearch" id="site-search">
+            <input name="q" placeholder="Iskanje">
+            <input class="btn" type="submit" tabindex="2" value="">
+        </form>
+    </header>
+    <nav class="main">
+        <a class="x-nav"></a><ul class="navigation main">
+<li class="li-12 plus first"><a href="/si/studij-na-fis/">Študij na FIŠ</a><ul class="navigation main-sub">
+<li class="first"><a href="/si/studij-na-fis/zakaj-informatika/" class="level-2">Zakaj informatika?</a></li>
+<li><a href="/si/studij-na-fis/zakaj-fis/" class="level-2">Zakaj FIŠ?</a></li>
+<li><a href="/si/studij-na-fis/zakaj-studij-v-novem-mestu/" class="level-2">Zakaj študij v Novem mestu?</a></li>
+<li><a href="/si/studij-na-fis/prijava-in-vpis/" class="level-2">Prijava in vpis</a></li>
+<li><a href="/si/studij-na-fis/vpis-kot-obcan/" class="level-2">Vpis kot ob�?an</a></li>
+<li><a href="/si/studij-na-fis/karierni-center/" class="level-2">Karierni center</a></li>
+<li><a href="/si/studij-na-fis/ceniki/" class="level-2">Ceniki</a></li>
+<li><a href="/si/studij-na-fis/pogosta-vprasanja/" class="level-2">Pogosta vprašanja</a></li>
+</ul>
+</li>
+<li class="li-13 plus"><a href="/si/studijski-programi/">Študijski programi</a><ul class="navigation main-sub">
+<li class="first"><a href="/si/studijski-programi/visokosolski-strokovni-rst/" class="level-2">Visokošolski strokovni program RST</a></li>
+<li><a href="/si/studijski-programi/visokosolski-strokovni/" class="level-2">Visokošolski strokovni program ISD</a></li>
+<li><a href="/si/studijski-programi/univerzitetni-program/" class="level-2">Univerzitetni program ISD</a></li>
+<li><a href="/si/studijski-programi/magistrski-programi/" class="level-2">Magistrski program ISD</a></li>
+<li><a href="/si/studijski-programi/magistrski-program-rst/" class="level-2">Magistrski program RST</a></li>
+<li><a href="/si/studijski-programi/doktorski-programi/" class="level-2">Doktorski program</a></li>
+</ul>
+</li>
+<li class="li-14 plus"><a href="/si/za-studente/">Za študente</a><ul class="navigation main-sub">
+<li class="first"><a href="/si/za-studente/referat/" class="level-2">Referat</a></li>
+<li><a href="/si/za-studente/urnik-in-studijski-koledar/" class="level-2">Urnik in študijski koledar</a></li>
+<li><a href="/si/za-studente/moodle/" class="level-2">Moodle</a></li>
+<li><a href="/si/za-studente/knjiznica/" class="level-2">Knjižnica</a></li>
+<li><a href="/si/za-studente/mednarodne-izmenjave/" class="level-2">Mednarodne izmenjave</a></li>
+<li><a href="/si/za-studente/studentski-svet/" class="level-2">Študentski svet</a></li>
+<li><a href="/si/za-studente/microsoft/" class="level-2">Microsoft</a></li>
+<li><a href="/si/za-studente/iknow-klub/" class="level-2">iKnow klub</a></li>
+<li><a href="/si/za-studente/eduroam/" class="level-2">Eduroam</a></li>
+<li><a href="/si/za-studente/ibmbluemix/" class="level-2">IBM Bluemix</a></li>
+</ul>
+</li>
+<li class="li-15 plus"><a href="/si/raziskave-in-razvoj/">Raziskave in razvoj</a><ul class="navigation main-sub">
+<li class="first"><a href="/si/raziskave-in-razvoj/raziskovalne-usmeritve/" class="level-2">Znanstvene usmeritve</a></li>
+<li><a href="/si/raziskave-in-razvoj/raziskave-in-projekti/" class="level-2">Projekti in programi</a></li>
+<li><a href="/si/raziskave-in-razvoj/instituti/" class="level-2">Raziskovalne skupine</a></li>
+<li><a href="/si/raziskave-in-razvoj/racunalniska-infrastruktura/" class="level-2">Infrastruktura</a></li>
+<li><a href="/si/raziskave-in-razvoj/sodelujmo/" class="level-2">Sodelujmo</a></li>
+</ul>
+</li>
+<li class="li-16 plus"><a href="/si/dogodki-in-novice/">Dogodki in novice</a><ul class="navigation main-sub">
+<li class="first"><a href="/si/dogodki-in-novice/novice/" class="level-2">Novice</a></li>
+<li><a href="/si/dogodki-in-novice/posveti-in-konference/" class="level-2">Posveti in konference</a></li>
+<li><a href="/si/dogodki-in-novice/zimske-in-poletne-sole/" class="level-2">Zimske in poletne šole</a></li>
+<li><a href="/si/dogodki-in-novice/akademski-dogodki/" class="level-2">Akademski dogodki</a></li>
+<li><a href="/si/dogodki-in-novice/obstudijski-dogodki/" class="level-2">Obštudijski dogodki</a></li>
+<li><a href="/si/dogodki-in-novice/alumni-klub/" class="level-2">Alumni klub</a></li>
+<li><a href="/si/dogodki-in-novice/karierni-center/" class="level-2">Karierni center</a></li>
+</ul>
+</li>
+<li class="li-17 plus last"><a href="/si/o-fakulteti/">O fakulteti</a><ul class="navigation main-sub">
+<li class="first"><a href="/si/o-fakulteti/nasa-zgodba/" class="level-2">Naša zgodba</a></li>
+<li><a href="/si/o-fakulteti/organiziranost/" class="level-2">Organiziranost</a></li>
+<li><a href="/si/o-fakulteti/sodelavci/" class="level-2">Sodelavci</a></li>
+<li><a href="/si/o-fakulteti/katalog-dokumentov/" class="level-2">Katalog dokumentov</a></li>
+<li><a href="/si/o-fakulteti/za-medije/" class="level-2">Za medije</a></li>
+<li><a href="/si/o-fakulteti/vizitka/" class="level-2">Vizitka</a></li>
+</ul>
+</li>
+</ul>
+
+    </nav>
+    <div class="container">
+    <article class="content">
+<div class="rotator">
+<div id="rotator">
+<img src="/media/slike/2020/__1200/kopija_izdelka_kopija_izdelka_vpis_rotator__1_.png" alt="Prijave za vpis na 2. in 3. stopnjo študija so odprte!" title="#c-1">
+
+<img src="/media/slike/2020/__1200/online_info_rotator___1__2_.png" alt="Online informativni dan" title="#c-2">
+
+<img src="/media/slike/2020/__1200/novo_9_6__1_.png" alt="Ponovno podaljšan 1. prijavni rok za vpis na 1. stopnjo!" title="#c-3">
+
+</div>
+<div id="c-1" class="nivo-html-caption">
+<a href="https://www.fis.unm.si/si/dogodki-in-novice/novice/odprt-je-1-prijavni-rok-za-vpis-v-studij-na-2-in-3-stopnji/15141/">
+<span class="ttl">Prijave za vpis na 2. in 3. stopnjo študija so odprte!</span>
+</a>
+</div>
+<div id="c-2" class="nivo-html-caption">
+<a href="https://www.fis.unm.si/si/dogodki-in-novice/novice/online-informativni-dan/15188/">
+<span class="ttl">Online informativni dan</span>
+</a>
+</div>
+<div id="c-3" class="nivo-html-caption">
+<a href="https://www.fis.unm.si/si/dogodki-in-novice/novice/obvestilo-o-ponovnem-podaljsanju-1-prijavnega-roka-za-vpis-v-studij-na-1-stopnji/15163/">
+<span class="ttl">Ponovno podaljšan 1. prijavni rok za vpis na 1. stopnjo!</span>
+</a>
+</div>
+</div><ul class="boxes">
+<li class="box b-1 first">
+<h3><a href="/si/o-fakulteti/">SPOZNAJTE FIŠ</a></h3>
+<ul>
+<li><a href="/si/o-fakulteti/nasa-zgodba/">Naša zgodba</a></li>
+<li><a href="/si/studijski-programi/">Študijski programi</a></li>
+<li><a href="/si/raziskave-in-razvoj/instituti/">Inštituti</a></li>
+<li><a href="/si/o-fakulteti/za-medije/">Za medije</a></li>
+</ul>
+</li>
+<li class="box b-2">
+<h3><a href="/si/studij-na-fis/">BODOČI ŠTUDENTI</a></h3>
+<ul>
+<li><a href="/si/studij-na-fis/zakaj-informatika/">Zakaj informatika?</a></li>
+<li><a href="/si/studij-na-fis/zakaj-fis/">Zakaj FIŠ?</a></li>
+<li><a href="/si/studij-na-fis/zakaj-studij-v-novem-mestu/">Zakaj študij v Novem mestu?</a></li>
+<li><a href="/si/studij-na-fis/prijava-in-vpis/">Prijava in vpis</a></li>
+</ul>
+</li>
+<li class="box b-3">
+<h3><a href="/si/dogodki-in-novice/">DOGAJANJE NA FIŠ</a></h3>
+<ul>
+<li><a href="http://www.fis.unm.si/si/raziskave-in-razvoj/raziskave-in-projekti/">Raziskave in projekti</a></li>
+<li><a href="/si/dogodki-in-novice/obstudijski-dogodki/">Obštudijski dogodki</a></li>
+<li><a href="http://www.fis.unm.si/si/dogodki-in-novice/karierni-center/" target="_blank">Karierni center</a></li>
+<li><a href="http://www.fis.unm.si/si/za-studente/knjiznica/">Knjižnica</a></li>
+</ul>
+</li>
+<li class="box b-4 last">
+<h3><a href="/si/raziskave-in-razvoj/sodelujmo/">SODELUJMO</a></h3>
+<ul>
+<li><a href="http://www.fis.unm.si/si/raziskave-in-razvoj/sodelujmo/partnerji/">Partnerji</a></li>
+<li><a href="http://www.fis.unm.si/si/raziskave-in-razvoj/sodelujmo/" target="_blank">Za podjetja</a></li>
+<li><a href="http://www.fis.unm.si/si/raziskave-in-razvoj/sodelujmo/mednarodna-dejavnost/">Mednarodno dogajanje</a></li>
+<li><a href="http://www.fis.unm.si/si/za-studente/mednarodne-izmenjave/">Erasmus+</a></li>
+</ul>
+</li>
+</ul></article>
+<aside>
+<div class="block quick">
+<h3>Hitre povezave</h3>
+<ul>
+<li><a href="/si/za-studente/referat/">Referat</a></li>
+<li><a href="http://urnik.fis.unm.si/" target="_blank">Urnik</a></li>
+<li><a href="https://www.fis.unm.si/si/studij-na-fis/prijava-in-vpis/" target="_blank">Prijava in vpis 2020/21</a></li>
+</ul>
+<ul>
+<li><a href="http://www.fis.unm.si/si/studij-na-fis/ceniki/">Ceniki</a></li>
+</ul>
+<ul>
+<li><a href="https://www.fis.unm.si/si/dogodki-in-novice/karierni-center/" target="_blank">Karierni center</a></li>
+<li><a href="https://www.fis.unm.si/si/za-studente/knjiznica/" target="_blank">Knjižnica</a></li>
+</ul>
+</div><div class="block news">
+<h3>Novice</h3>
+<ul class="items">
+<li class="item">
+<p class="date">1.6.2020</p>
+<p class="heading"><a href="/si/dogodki-in-novice/novice/osebni-racunalniki-upocasnjujejo-razvoj-srednjih-in-malih-podjetij/15202/">Osebni ra�?unalniki upo�?asnjujejo razvoj srednjih in malih podjetij</a></p>
+</li>
+<li class="item">
+<p class="date">29.5.2020</p>
+<p class="heading"><a href="/si/dogodki-in-novice/novice/online-informativni-dan/15188/">ONLINE INFORMATIVNI DAN, 12. 6. 2020</a></p>
+</li>
+<li class="item">
+<p class="date">29.5.2020</p>
+<p class="heading"><a href="/si/dogodki-in-novice/novice/obvestilo-o-zagovoru-diplomske-in-magistrske-naloge/15200/">Obvestilo o zagovoru diplomske naloge</a></p>
+</li>
+</ul>
+<p><a href="/si/dogodki-in-novice/novice/">Vse novice</a></p>
+</div></aside>
+
+    </div>
+
+    <footer>
+        <ul>
+<li class="first">
+<h3>Kontakt</h3>
+<address>Fakulteta za informacijske študije v Novem mestu</address><address>Ljubljanska cesta 31a, p.p. 603<br /> 8000 Novo mesto <br /> tel: 07 3737 884 <br /> e-pošta: <a href="mailto:info@fis.unm.si">info@fis.unm.si</a> <br /> <a href="http://www.fis.unm.si/">www.fis.unm.si</a></address><address><a href="/si/pravno-obvestilo/">Pravno obvestilo</a></address>
+</li>
+<li>
+<h3>Spletni referat</h3>
+<form action="https://vis.fis.unm.si/main.asp" enctype="application/x-www-form-urlencoded" method="post">
+<fieldset>
+<label for="user">Uporabniško ime</label><input type="text" name="up_ime" class="def" id="user">
+<label for="pass">Geslo</label><input type="password" name="geslo" class="def" id="pass">
+</fieldset>
+<input type="submit" name="potrditev" value="POTRDITEV" class="btn">
+</form>
+</li>
+<li>
+<h3>Vprašajte nas</h3>
+<p>Vprašanja o študiju, pobude za študentski svet, povpraševanje o zaposlitvi ali vaše mnenje nam pošljite preko <a class="pop-up" href="#contact-form">kontaktnega obrazca</a>.</p>
+</li>
+<li>
+<h3> </h3>
+<p><a href="https://www.fis.unm.si/si/za-studente/moodle/" target="_blank"><img title="Moodle" src="/media/img/logo/Moodle.gif" alt="Moodle" /></a></p>
+<p><a href="/si/za-studente/eduroam/"><img title="Eduroam" src="/media/img/logo/eduroam.gif" alt="Eduroam" /></a></p>
+<p><a href="https://www.fis.unm.si/si/za-studente/mednarodne-izmenjave/" target="_blank"><img src="/media/dokumenti/2020/logo_erasmus_plus001.png" alt="" width="270" /></a></p>
+<p><a href="http://www.eua.be/iep" target="_blank"><img src="/media/slike/2015/eua_iep_evaluated_by_till_2020.jpg" alt="" width="149" height="50" /></a></p>
+<p><a href="http://iiakm.org/conference/KM2017/index.php" target="_blank"><img src="/media/dokumenti/2016/unnamed001.jpg" alt="" /></a></p>
+<p><a href="http://www.fis.unm.si/si/za-studente/ibmbluemix/" target="_blank"><img src="/media/dokumenti/2017/ibmbluemix.jpg" alt="" /></a></p>
+<p><a href="http://www.s4p.si/" target="_blank"><img src="/media/dokumenti/2018/screen_shot_2018_01_15_at_19_56_04.png" alt="" width="173" height="81" /></a>&nbsp;&nbsp;</p>
+</li>
+<li>
+<h3> </h3>
+<p><a title="microsoft azure" href="/si/za-studente/microsoft/"><img src="data:image/png;base64,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" alt="" /></a></p>
+<p><a href="http://datalab.fis.unm.si" target="_blank"><img title="Laboratory of Data Technologies" src="/media/img/logo/datalab.gif" alt="Laboratory of Data Technologies" /></a></p>
+<p><a href="http://kreativnojedro.fis.unm.si/si/" target="_blank"><img src="/media/dokumenti/2014/logo_kj_2.jpg" alt="" /></a></p>
+<p><a href="http://itis.fis.unm.si/" target="_blank"><img src="/media/dokumenti/2020/itis_20.png" alt="Itis 2020" /></a></p>
+<p><a href="http://esimbioza.fis.unm.si/" target="_blank"><img src="/media/dokumenti/2017/clipboard01.jpg" alt="" /></a></p>
+<p><a href="http://jro-ktt.si" target="_blank"><img src="/media/dokumenti/2018/ktt_logo.png" alt="" /></a></p>
+</li>
+<li class="last">
+<h3> </h3>
+<p><a class="rss" href="http://feeds.feedburner.com/FISNmsi" target="_blank">RSS</a></p>
+<p><a class="fb" href="https://www.facebook.com/FakultetaFIS/" target="_blank">Facebook</a></p>
+<p><a class="linkedin" href="https://www.linkedin.com/company/faculty-of-information-studies" target="_blank">Linkedin</a></p>
+<p><a class="twitter" href="http://twitter.com/fisnm" target="_blank">Twitter</a></p>
+<p><a class="instagram" href="https://www.instagram.com/fis.nm/" target="_blank">Instagram</a></p>
+<p><a class="youtube" href="https://www.youtube.com/channel/UCyju-1lpv7TOGy0UTNk5q3Q" target="_blank">YouTube</a></p>
+<!--<p><a class="gplus" href="https://plus.google.com/109941849461637164050" rel="publisher" target="_blank">Google+</a></p>-->
+</li>
+</ul>
+    </footer>
+    <div class="hidden">
+        <div class="pop-up" id="contact-form">
+            <p class="h1">Vprašajte nas</h1>
+<p>Potrebujete dodatne informacije o študiju, študijskih programih, postopkih prijave in vpisa - vprašajte nas. Prav tako nam lahko posredujete vašo predstavitev in vaša mnenja. Vprašanja nam posredujte s spodnjim obrazcem, odgovor boste prejeli v najkrajšem možnem �?asu po elektronski pošti.</p>
+<form name="kontakt" id="contact" class="forma contact">
+    <ul>
+        <li>
+            <label for="name" id="l-name">Vaše pravo ime: <font color="#990000">*</font><span></span></label>
+            <input name="name" value="" size="35" class="def" id="name">
+        </li>
+        <li>
+            <label for="mail" id="l-mail">Vaš E-naslov: <font color="#990000">*</font> <span></span></label>
+            <input name="mail" value="" size="35" class="def" id="mail">
+        </li>
+        <li>
+            <label for="mailto" id="l-mailto">Podro�?je: <font color="#990000">*</font> <span></span></label>
+            <select name="mailto" class="def" id="mailto">
+            <option value="">Izberite podro�?je</option>
+            <option value="sf">Splošno o fakulteti</option>
+            <option value="st">Študijska tematika</option>
+            <option value="lb">Knjižnica</option>
+            <option value="sv">Študentski svet</option>
+            <option value="hq">Vodstvo fakultete</option>
+            <option value="hr">Zaposlitve</option>
+            </select>
+        </li>
+        <li>
+            <label for="message" id="l-message">Vaše sporo�?ilo: <font color="#990000">*</font> <span></span></label>
+            <textarea name="message" cols="32" rows="6" class="def" id="message"></textarea>
+        </li>
+        <li class="buttons">
+            <input value="Pošlji" class="btn" name="Submit" type="button">
+        </li>
+    </ul>
+    <div id="result"></div>
+    <p>Vsa polja, ozna�?ena z zvezdico (*) je potrebno obvezno izpolniti.</p>
+    <p class="small">Podatke bomo uporabljali v skladu z Zakonom o varstvu osebnih podatkov (Ur. list RS št. 86/2004) Pod nobenim pogojem jih ne bomo uporabili brez vašega dovoljenja, jih kakorkoli posredovali ali dali v uporabo tretjim osebam ali institucijam, razen v primerih, ki jih dolo�?a zakon. Uporabljali jih bomo izklju�?no v namene obveš�?anja o dogodkih, ki jih organizira FIŠ.</p>
+</form>
+
+        </div>
+    </div>
+
+
+<div class="hidden" id="div-site-srch">
+  <div id="searchBox"><div id="searchForm"></div><div id="searchOne"><p>...</p></div></div>
+</div>
+
+
+<style>
+  .gsc-adBlock,
+  .gsc-orderby,
+  .gsc-resultsHeader { display: none; }
+
+  .gsc-control-cse {
+    border: 0;
+    padding: 0;
+  }
+
+  .gsc-table-result, .gsc-thumbnail-inside, .gsc-url-top {
+    padding: 0;
+  }
+  table.gsc-table-result td {
+    border: 0;
+    padding: 0;
+  }
+  .gsc-above-wrapper-area {
+    border: 0;
+  }
+
+  .gs-webResult.gs-result a.gs-title:link, .gs-webResult.gs-result a.gs-title:link b, .gs-imageResult a.gs-title:link, .gs-imageResult a.gs-title:link b,
+  .gs-webResult.gs-result a.gs-title:visited, .gs-webResult.gs-result a.gs-title:visited b, .gs-imageResult a.gs-title:visited, .gs-imageResult a.gs-title:visited b,
+  .gsc-results .gsc-cursor-box .gsc-cursor-page {
+    color: #75ae1d;
+  }
+
+  .gsc-result-info-container,
+  .gsc-result-info {
+    padding: 0;
+  }
+
+  .gsc-results {
+    width: 100%;
+  }
+  .cse .gsc-webResult.gsc-result, .gsc-webResult.gsc-result, .gsc-imageResult-column, .gsc-imageResult-classic {
+    border: 0 !important;
+    padding: 0;
+  }
+</style>
+
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <!--script src="/inc/v-1/js/jquery-debug.js"></script-->
+  <script>window.jQuery || document.write('<script src="/inc/v-1/js/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+  <script src="/inc/v-1/js/vendor/jquery.nivo.slider.js"></script>
+  <script src="/inc/v-1/js/vendor/jquery.hoverIntent.min.js"></script>
+  <script src="/inc/v-1/js/vendor/jquery.cycle.all.min.js"></script>
+  <script src="/inc/v-1/js/vendor/testimonial-slider.js"></script>
+  <script src="/inc/v-1/js/vendor/jquery.fancybox-2.1.4.min.js"></script>
+  <script src="/inc/v-1/js/vendor/tmd-mail-form.js?dc=20150710-2"></script>
+  <script src="/inc/v-1/js/plugins.js"></script>
+  <script src="/inc/v-1/js/main.js"></script>
+  
+  
+</body>
+</html>

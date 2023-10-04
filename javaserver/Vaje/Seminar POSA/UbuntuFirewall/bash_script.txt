@@ -1,0 +1,20 @@
+#branje datotek v bash scriptu!!!
+
+# http://tldp.org/LDP/abs/html/index.html
+# http://tldp.org/LDP/abs/html/loops1.html
+# https://help.ubuntu.com/community/Beginners/BashScripting
+
+cat $filename |   # Supply input from a file.
+while read line   # As long as there is another line to read ...
+do
+  ...
+done
+
+
+
+#!bin/bash
+
+while read line
+do
+echo $line
+done
